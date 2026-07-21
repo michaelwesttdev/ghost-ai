@@ -40,7 +40,7 @@ export function ProjectSidebar({
         aria-hidden={!isOpen}
         inert={!isOpen}
         className={cn(
-          "fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-border bg-sidebar transition-transform duration-300",
+          "absolute left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-border bg-sidebar shadow-lg transition-transform duration-300",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
