@@ -11,9 +11,11 @@ It should:
 - accept `roomId`, `chatHistory`, `nodes`, and `edges`
 - authenticate the current user
 - resolve project access from `roomId`
-- trigger the `generate-spec` task
-- save a `TaskRun` record for ownership/access control
-- return the Trigger.dev `runId`
+- persist a `TaskRun` ownership record before triggering when possible: create a `TaskRun` in a pending state tied to the authenticated user and an idempotency key so the run can be queried and owned immediately
+- trigger the `generate-spec` task and update the `TaskRun` with the returned `runId` and status
+- return the `runId` to the client
+
+If triggering must occur before persisting (for example when a provider requires immediate trigger), record a durable idempotency key and implement compensation on retries: reconcile Trigger.dev runs and `TaskRun` records on retry so no orphaned runs or duplicate DB records remain. Always return the existing or newly created `runId` to the client.
 
 Do not trust a client-supplied `projectId`.
 

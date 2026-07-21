@@ -26,8 +26,9 @@ This is only for chat messages. Keep it separate from `ai-status-feed`, which ha
 
 4. Add message validation.
    - define or reuse a Zod schema in `types/tasks.ts`
-   - message shape should include sender, role, content, and timestamp
-   - validate feed messages before rendering them
+   - sender and timestamp MUST be derived server-side from the authenticated session (do not accept these fields from the client)
+   - restrict `role` to an explicit allowlist (for example: `user`, `assistant`, `system`, `error`) and validate on the server
+   - validate feed messages before rendering them to prevent identity spoofing and ordering manipulation
 
 ## Scope Limits
 

@@ -5,9 +5,9 @@ Add shared AI activity indicators so everyone in the room can see when generatio
 1. Add AI thinking state to the sidebar.
    - show a small status indicator when AI is working
    - make the status visible to everyone in the room
-   - disable the chat input while generation is active
-   - show a loading state on the send button
-   - keep the rest of the sidebar usable
+   - disable the chat input and send button only for the user who initiated the current run; other participants should retain the ability to send messages (the UI should still show the shared running indicator)
+   - show a loading state on the initiating user's send button
+   - keep the rest of the sidebar usable for others
 
 2. Add a shared AI status feed.
    - check the existing Liveblocks setup and installed agent-related features first
@@ -19,8 +19,8 @@ Add shared AI activity indicators so everyone in the room can see when generatio
 
 3. Add status message validation.
    - define the feed payload schema in `types/tasks.ts`
-   - the payload should support an optional `text` field
-   - validate incoming messages before displaying them
+   - use a discriminated, server-validated status shape that includes `runId` (string), `phase` (e.g. `started|processing|completed|failed|stale`), and a server-generated `timestamp` (ISO 8601 string). Optional `text` may be present for human-readable messages.
+   - validate the complete incoming payload on the server and client before displaying it
 
 4. Add thinking indicators to live cursors.
    - when a participant has `thinking: true` in presence, show a small spinner in their cursor name badge

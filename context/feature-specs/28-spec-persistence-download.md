@@ -17,9 +17,10 @@ Use this model for metadata only. The actual spec content should live in Vercel 
 
 After a spec is generated:
 
-- upload the Markdown content to Vercel Blob
-- store the Blob URL/path in `ProjectSpec.filePath`
-- link the record to the correct project
+- upload the Markdown content to Vercel Blob and obtain a server-generated blob key or private URL
+- store a validated, server-generated blob key or path in `ProjectSpec.filePath` (do not accept arbitrary client-provided paths)
+- link the `ProjectSpec` record to the correct project
+- ensure persistence is keyed by the generation task/run identifier: before uploading or creating the `ProjectSpec`, look up existing records for that run and reuse or atomically update them to prevent duplicates from retries
 - follow the same metadata + blob pattern used for canvas persistence
 
 3. Download route
@@ -31,9 +32,9 @@ It should:
 - authenticate the user
 - verify access to the project
 - verify the spec belongs to that project
-- fetch the file using `ProjectSpec.filePath`
-- return it as a downloadable Markdown file
-- handle not found and forbidden cases properly
+- validate that `ProjectSpec.filePath` is a server-generated blob key or internal URL (do not accept or redirect to arbitrary external URLs)
+- fetch the file privately on the server from Vercel Blob and stream the content back as a Markdown attachment (do not redirect the client to the stored URL)
+- return appropriate error codes for not found and forbidden cases
 
 ### Scope Limits
 

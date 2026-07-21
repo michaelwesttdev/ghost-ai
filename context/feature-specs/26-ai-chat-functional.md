@@ -15,11 +15,11 @@ in real time, and reflect AI-driven canvas updates through Liveblocks.
 
 - Use `useRealtimeRun(runId, { accessToken: publicToken })`
 - While the run is active:
-  - disable the chat input
+  - disable the initiating user's chat input
   - show a loading state (spinner in the button is enough)
-- When the run completes:
-  - push a final AI message to `ai-chat`
-  - reset loading + run state
+- When the run completes, fails, or is cancelled:
+  - surface a final message: on success push final AI message; on failure or cancel push an error/notification into `ai-chat`
+  - always reset `runId`, `publicToken`, and loading state in a finally-equivalent cleanup path so local state does not remain stuck
 
 3. Canvas updates (realtime)
 

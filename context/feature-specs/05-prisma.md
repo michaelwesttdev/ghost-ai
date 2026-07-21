@@ -18,6 +18,10 @@ Add `Project`:
 - timestamps
 - indexes on owner ID and creation date
 
+Canonical identifier
+
+- `id`: String — canonical project identifier. Use a UUID string and generate on the server: `id String @id @default(uuid())` in Prisma. API routes should treat this as the canonical project ID. Client-supplied IDs should generally be rejected; if a client-provided ID is accepted for room alignment it must be validated (UUID format), collision-checked, and documented in the API contract. Implementations MUST NOT invent alternate identifier schemes for the same Project entity.
+
 Add `ProjectCollaborator`:
 
 - project relation with cascade delete

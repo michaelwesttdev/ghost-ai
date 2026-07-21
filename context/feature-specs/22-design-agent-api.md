@@ -6,11 +6,11 @@ This unit handles triggering background jobs, tracking runs, and issuing tokens.
 1. Add the design trigger route.
 
    Create: `POST /api/ai/design`
-   This route should:
-   - accept the design prompt and required context (`roomId`, `projectId`)
-   - trigger the design task through Trigger.dev
-   - create a TaskRun record
-   - return the run ID to the client
+      This route should:
+      - accept the design prompt and required context (`roomId`) — do not trust a client-supplied `projectId`
+      - authenticate the user and derive the `projectId` server-side by resolving the project associated with the `roomId` and verifying the authenticated user is the owner or a collaborator
+      - trigger the design task through Trigger.dev
+      - create a TaskRun record and return the run ID to the client
 
 2. Add task run tracking.
 
@@ -29,11 +29,17 @@ This unit handles triggering background jobs, tracking runs, and issuing tokens.
 3. Add the token route.
 
    Create: `POST /api/ai/design/token`
-   This route should:
-   - accept a run ID
-   - verify ownership using the TaskRun record
-   - generate a Trigger.dev public token scoped to that run
-   - return the token to the client
+      This route should:
+      - accept a run ID
+      - verify ownership using the TaskRun record
+      - generate a Trigger.dev public token scoped to that run
+      - return the token to the client
+
+   Idempotency and retries
+
+   - The `POST /api/ai/design` route MUST be idempotent-safe: accept an optional idempotency key in headers or body and persist it alongside the created `TaskRun` so retries from the client do not create duplicate runs.
+   - On request: check for an existing `TaskRun` with the same idempotency key for this user+project; if found, return the existing `runId` rather than creating a new Trigger.dev run.
+   - If Trigger.dev run creation and TaskRun persistence are separated by failure, implement compensation: record the idempotency key and task metadata as soon as possible, and on retry reconcile by checking both Trigger.dev runs and TaskRun records to avoid orphaned runs or duplicate records. Return the existing or newly created `runId` to the client.
 
 4. Create the design task.
 

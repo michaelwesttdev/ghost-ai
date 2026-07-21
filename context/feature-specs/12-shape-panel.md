@@ -4,7 +4,7 @@ Add a bottom shape panel so users can drag shapes onto the canvas and create new
 
 1. Add a floating pill-shaped toolbar at the bottom-center of the canvas.
 
-2. Add draggable icon buttons for these shapes:
+2. Add draggable icon buttons for these shapes. Ensure each button also supports click and keyboard activation (Enter/Space) with an accessible name so users can create shapes without dragging:
    - rectangle
    - diamond
    - circle
@@ -29,7 +29,7 @@ Add a bottom shape panel so users can drag shapes onto the canvas and create new
    - use the default node color
    - use the dragged shape value
 
-6. Generate each node ID using the shape name, timestamp, and a counter.
+6. Generate each node ID using a collision-resistant strategy: prefer a UUID (v4) or include a unique client/session identifier in the ID. IDs must remain unique across collaborators before nodes are written to shared state; do not rely solely on shape name + timestamp + counter.
 
 7. Add a basic renderer for the custom canvas node type so new nodes are visible.
 
