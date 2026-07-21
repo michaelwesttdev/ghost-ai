@@ -16,18 +16,20 @@ interface CreateProjectDialogProps {
   open: boolean
   onClose: () => void
   projectName: string
-  projectSlug: string
+  roomId: string
   onNameChange: (name: string) => void
   isLoading: boolean
+  onCreate: () => void
 }
 
 export function CreateProjectDialog({
   open,
   onClose,
   projectName,
-  projectSlug,
+  roomId,
   onNameChange,
   isLoading,
+  onCreate,
 }: CreateProjectDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
@@ -47,7 +49,7 @@ export function CreateProjectDialog({
             autoFocus
           />
           <p className="text-xs text-copy-muted">
-            Slug: /{projectSlug || "enter-a-name"}
+            Room: /{roomId || "enter-a-name"}
           </p>
         </div>
 
@@ -55,8 +57,11 @@ export function CreateProjectDialog({
           <DialogClose render={<Button variant="outline" />}>
             Cancel
           </DialogClose>
-          <Button disabled={!projectName.trim() || isLoading}>
-            Create
+          <Button
+            disabled={!projectName.trim() || isLoading}
+            onClick={onCreate}
+          >
+            {isLoading ? "Creating..." : "Create"}
           </Button>
         </DialogFooter>
       </DialogContent>
