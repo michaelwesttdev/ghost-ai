@@ -10,13 +10,14 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import type { Project } from "@/lib/types"
+import type { ProjectData } from "@/lib/data/projects"
 
 interface DeleteProjectDialogProps {
   open: boolean
   onClose: () => void
-  project: Project | null
+  project: ProjectData | null
   isLoading: boolean
+  onDelete: () => void
 }
 
 export function DeleteProjectDialog({
@@ -24,6 +25,7 @@ export function DeleteProjectDialog({
   onClose,
   project,
   isLoading,
+  onDelete,
 }: DeleteProjectDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
@@ -40,8 +42,12 @@ export function DeleteProjectDialog({
           <DialogClose render={<Button variant="outline" />}>
             Cancel
           </DialogClose>
-          <Button variant="destructive" disabled={isLoading}>
-            Delete
+          <Button
+            variant="destructive"
+            disabled={isLoading}
+            onClick={onDelete}
+          >
+            {isLoading ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>
