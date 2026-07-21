@@ -4,19 +4,36 @@ Integrate spec generation results into the editor so users can view, preview, an
 
 1. Spec list
 
-- in the right sidebar (Specs tab), show a list of specs for the current project
-- fetch specs from the backend using the existing ProjectSpec API
-- display:
+ in the right sidebar (Specs tab), show a list of specs for the current project
+ fetch specs from the backend using a secured ProjectSpec list endpoint
+ display:
   - createdAt
   - filename
-- keep items simple and clickable
+ keep items simple and clickable
+
+API contracts
+
+- `GET /api/projects/[projectId]/specs`
+  - auth: authenticated user required
+  - query params: optional pagination (page, perPage)
+  - response: `200 [{ id: string, filename: string, createdAt: string, runId?: string }]`
+
+- `GET /api/projects/[projectId]/specs/[specId]`
+  - auth: authenticated user required
+  - response: `200 { id: string, filename: string, createdAt: string, filePath: string }` (metadata only)
+
+- `GET /api/projects/[projectId]/specs/[specId]/content` (used by preview modal)
+  - auth: authenticated user required
+  - response: `200 { content: string, contentType: 'text/markdown' }` — server fetches the blob and returns the Markdown payload to the authorized client (no redirect to Blob URLs)
+
+Clients MUST use these authorized endpoints rather than attempting to access Blob storage directly.
 
 2. Preview modal
 
-- open a modal when a spec is selected
-- fetch the spec content through an existing endpoint (do not access Blob directly from the client)
-- render content as Markdown
-- include a close action and basic keyboard support
+ open a modal when a spec is selected
+ fetch the spec content through an authorized server endpoint (do not access Blob directly from the client)
+ sanitize the rendered Markdown output: disable raw HTML, strip dangerous elements, and restrict links to safe URL protocols (`https`, `mailto`) before rendering
+ include a close action and basic keyboard support
 
 3. Download action
 

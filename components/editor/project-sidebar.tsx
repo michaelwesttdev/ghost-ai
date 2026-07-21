@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
@@ -14,6 +15,7 @@ interface ProjectSidebarProps {
   onCreate: () => void
   onRename: (project: ProjectData) => void
   onDelete: (project: ProjectData) => void
+  currentRoomId?: string
 }
 
 export function ProjectSidebar({
@@ -24,6 +26,7 @@ export function ProjectSidebar({
   onCreate,
   onRename,
   onDelete,
+  currentRoomId,
 }: ProjectSidebarProps) {
   return (
     <>
@@ -34,6 +37,8 @@ export function ProjectSidebar({
         />
       )}
       <aside
+        aria-hidden={!isOpen}
+        inert={!isOpen}
         className={cn(
           "fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-border bg-sidebar transition-transform duration-300",
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -74,12 +79,28 @@ export function ProjectSidebar({
                 {ownedProjects.map((project) => (
                   <div
                     key={project.id}
-                    className="group flex items-center justify-between rounded-lg px-3 py-2 hover:bg-muted/50"
+                    className={cn(
+                      "group flex items-center justify-between rounded-lg px-3 py-2 hover:bg-muted/50",
+                      project.id === currentRoomId && "bg-muted"
+                    )}
                   >
-                    <span className="truncate text-sm text-foreground">
-                      {project.name}
-                    </span>
-                    <div className="hidden items-center gap-0.5 group-hover:flex">
+                    <Link
+                      href={`/editor/${project.id}`}
+                      className="min-w-0 flex-1"
+                    >
+                      <span className="block truncate text-sm text-foreground">
+                        {project.name}
+                      </span>
+                    </Link>
+                    <div
+                      className={cn(
+                        "flex items-center gap-0.5 transition-opacity duration-150",
+                        "opacity-0 pointer-events-none",
+                        "group-hover:opacity-100 group-hover:pointer-events-auto",
+                        "group-focus-within:opacity-100 group-focus-within:pointer-events-auto"
+                      )}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Button
                         variant="ghost"
                         size="icon-xs"
@@ -114,11 +135,19 @@ export function ProjectSidebar({
                 {sharedProjects.map((project) => (
                   <div
                     key={project.id}
-                    className="flex items-center rounded-lg px-3 py-2"
+                    className={cn(
+                      "rounded-lg px-3 py-2 hover:bg-muted/50",
+                      project.id === currentRoomId && "bg-muted"
+                    )}
                   >
-                    <span className="truncate text-sm text-foreground">
-                      {project.name}
-                    </span>
+                    <Link
+                      href={`/editor/${project.id}`}
+                      className="block"
+                    >
+                      <span className="block truncate text-sm text-foreground">
+                        {project.name}
+                      </span>
+                    </Link>
                   </div>
                 ))}
               </div>

@@ -58,6 +58,7 @@
 - Input: current canvas graph and project context.
 - Execution: durable background task via Trigger.dev.
 - Output: Markdown technical spec saved to the filesystem and linked to the project in the database.
+ - Output: Markdown technical spec uploaded to Vercel Blob; the database retains a reference/key to the blob (e.g. `filePath` or blob key) while keeping the existing project-linking behavior.
 
 ## Invariants
 

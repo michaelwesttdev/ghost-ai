@@ -30,12 +30,10 @@ Add a floating control bar for zoom and undo/redo, then wire the same actions to
    - listen for keyboard shortcuts on `window`
    - ignore shortcuts while typing in inputs, textareas, or editable text fields
 
-5. Support these shortcuts:
-   - `+` or `=` to zoom in
-   - `-` to zoom out
-   - `Cmd/Ctrl + Z` to undo
-   - `Cmd/Ctrl + Shift + Z` to redo
-   - `Cmd/Ctrl + Y` to redo
+5. Support these shortcuts and precedence rules:
+   - Unmodified presses of `+`, `=` (zoom in) and `-` (zoom out) should trigger canvas zoom. These zoom handlers should call `preventDefault()` to avoid the browser's page zoom where appropriate.
+   - Cmd/Ctrl-based shortcuts take precedence: `Cmd/Ctrl + Z` (undo), `Cmd/Ctrl + Shift + Z` (redo), `Cmd/Ctrl + Y` (redo) should be detected before unmodified handlers. Undo/redo handlers MUST call `preventDefault()` to avoid triggering browser history navigation.
+   - The hook should ignore shortcuts while typing in inputs, textareas, or editable text fields.
 
 ## Scope Limits
 

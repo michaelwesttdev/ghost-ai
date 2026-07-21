@@ -16,7 +16,7 @@ Replace the canvas placeholder with a Liveblocks-backed React Flow canvas.
 3. Wire React Flow to Liveblocks state.
    - use `useLiveblocksFlow`
    - enable suspense
-   - start with empty nodes and edges
+   - when seeding a *new* room, initialize React Flow with empty nodes and edges; for existing rooms always hydrate from Liveblocks state and preserve the room's nodes and edges across remounts or reconnects (do not overwrite existing room state with empty data)
    - pass the synced nodes, edges, and change handlers into `ReactFlow`
 
 4. Add shared canvas types in `types/canvas.ts`.
