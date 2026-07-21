@@ -1,14 +1,12 @@
-import Link from "next/link";
+import { auth } from "@clerk/nextjs/server"
+import { redirect } from "next/navigation"
 
-export default function Home() {
-  return (
-    <div className="flex h-dvh items-center justify-center">
-      <Link
-        href="/editor"
-        className="rounded-lg border border-border bg-elevated px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-subtle"
-      >
-        Open Editor
-      </Link>
-    </div>
-  );
+export default async function Home() {
+  const { userId } = await auth()
+
+  if (userId) {
+    redirect("/editor")
+  }
+
+  redirect("/sign-in")
 }
