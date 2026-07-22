@@ -3,11 +3,16 @@ import type { Node, Edge } from "@xyflow/react"
 export interface CanvasNodeData extends Record<string, unknown> {
   label: string
   color: string
+  textColor: string
   shape: string
 }
 
+export interface CanvasEdgeData extends Record<string, unknown> {
+  label?: string
+}
+
 export type CanvasNode = Node<CanvasNodeData, "canvasNode">
-export type CanvasEdge = Edge<Record<string, unknown>, "canvasEdge">
+export type CanvasEdge = Edge<CanvasEdgeData, "canvasEdge">
 
 export interface NodeColorPair {
   fill: string

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { EditorNavbar } from "@/components/editor/editor-navbar"
 import { ProjectSidebar } from "@/components/editor/project-sidebar"
@@ -10,6 +10,9 @@ import { RenameProjectDialog } from "@/components/editor/rename-project-dialog"
 import { DeleteProjectDialog } from "@/components/editor/delete-project-dialog"
 import { CanvasProvider } from "@/components/editor/canvas-provider"
 import { EditorCanvas } from "@/components/editor/editor-canvas"
+import type { EditorCanvasHandle } from "@/components/editor/editor-canvas"
+import type { CanvasTemplate } from "@/components/editor/starter-templates"
+import { StarterTemplatesModal } from "@/components/editor/starter-templates-modal"
 import { useProjectActions } from "@/hooks/use-project-actions"
 import type { ProjectData } from "@/lib/data/projects"
 import type { Project } from "@/lib/types"
@@ -31,6 +34,8 @@ export function WorkspaceShell({
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [aiSidebarOpen, setAiSidebarOpen] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
+  const [templatesOpen, setTemplatesOpen] = useState(false)
+  const editorCanvasRef = useRef<EditorCanvasHandle>(null)
 
   const {
     activeDialog,
@@ -67,10 +72,12 @@ export function WorkspaceShell({
         showAiSidebar
         isAiSidebarOpen={aiSidebarOpen}
         onToggleAiSidebar={() => setAiSidebarOpen((v) => !v)}
+        showTemplates
+        onOpenTemplates={() => setTemplatesOpen(true)}
       />
       <div className="relative flex flex-1 overflow-hidden">
         <CanvasProvider roomId={roomId}>
-          <EditorCanvas />
+          <EditorCanvas ref={editorCanvasRef} />
         </CanvasProvider>
 
         <ProjectSidebar
@@ -128,6 +135,14 @@ export function WorkspaceShell({
         project={selectedProject}
         isLoading={isLoading}
         onDelete={handleDelete}
+      />
+
+      <StarterTemplatesModal
+        open={templatesOpen}
+        onClose={() => setTemplatesOpen(false)}
+        onImport={(template: CanvasTemplate) => {
+          editorCanvasRef.current?.importTemplate(template)
+        }}
       />
     </div>
   )
